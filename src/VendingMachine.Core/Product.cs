@@ -2,15 +2,17 @@
 {
     public class Product
     {
+        public static Product CokeCan = new Product("CokeCan", 1.20M);
+        public static Product CokeBottle = new Product("CokeBottle", 2M);
+        public static Product Crisps = new Product("Crisps", 1.40M);
+        
         public string Name { get; private set; }
-        public decimal Price { get; internal set; }
+        public decimal Price { get; private set; }
 
-        public Product(string name)
+        private Product(string name, decimal price)
         {
             Name = name;
-
-            // All products 50p
-            Price = 0.50M;
+            Price = price;
         }
     }
 }

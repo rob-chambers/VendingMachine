@@ -49,7 +49,11 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CoinCreditProviderTests.cs" />
+    <Compile Include="NoteDenominationTests.cs" />
+    <Compile Include="CoinDenominationTests.cs" />
     <Compile Include="MachineTests.cs" />
+    <Compile Include="NoteCreditProviderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

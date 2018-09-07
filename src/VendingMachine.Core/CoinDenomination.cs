@@ -6,6 +6,7 @@
         public static CoinDenomination TenPence = new CoinDenomination(10);
         public static CoinDenomination TwentyPence = new CoinDenomination(20);
         public static CoinDenomination FiftyPence = new CoinDenomination(50);
+        public static CoinDenomination OnePound = new CoinDenomination(100);
 
         private CoinDenomination(int size)
         {
@@ -19,7 +20,9 @@
 
         public override string ToString()
         {
-            return Size + "p";
+            return Size < 100 
+                ? Size + "p" 
+                : "£1";
         }
     }
 }

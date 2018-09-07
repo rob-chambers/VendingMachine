@@ -1,20 +1,31 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using VendingMachine.Core;
 
 namespace VendingMachine.Tests
 {
     [TestClass]
     public class MachineTests
-    {
-        Product _coke;
+    {        
         Machine _machine;
+        private Product _coke;
 
         private void Init()
         {
-            _coke = new Product("Coke");
+            _coke = Product.CokeCan;
             var builder = new MachineBuilder();
             _machine = builder.Build();
+        }
+
+        private void InitWithSufficientCredit()
+        {
+            Init();
+
+            _machine.Locations["A1"].Stock(_coke);
+            _machine.CoinCreditProvider.InsertCoin(CoinDenomination.OnePound);
+            _machine.CoinCreditProvider.InsertCoin(CoinDenomination.FiftyPence);
+            _machine.CoinCreditProvider.InsertCoin(CoinDenomination.FiftyPence);
+            _machine.CoinCreditProvider.InsertCoin(CoinDenomination.TwentyPence);
+            _machine.CoinCreditProvider.InsertCoin(CoinDenomination.TwentyPence);
         }
 
         [TestMethod]
@@ -59,6 +70,65 @@ namespace VendingMachine.Tests
             
             var result = _machine.Vend(_machine.Locations["A1"].Code);
             Assert.AreEqual(VendResult.Success, result);
+        }
+
+        [TestMethod]
+        public void BadVendingLocationThrowsException()
+        {
+            Init();
+
+            var pass = false;
+            string exception = string.Empty;
+
+            try
+            {
+                _machine.Vend("bad");
+            }
+            catch (InvalidLocationException ex)
+            {
+                exception = ex.Message;
+                pass = true;
+            }
+
+            Assert.AreEqual("bad does not exist", exception);
+            Assert.IsTrue(pass);
+        }
+
+        [TestMethod]
+        public void CannotVendWhenStockedButInsufficientCredit()
+        {
+            Init();
+
+            _machine.Locations["A1"].Stock(_coke);
+            _machine.CoinCreditProvider.InsertCoin(CoinDenomination.FivePence);
+            var result = _machine.Vend(_machine.Locations["A1"].Code);
+            Assert.AreEqual(VendResult.InsufficientCredit, result);
+        }
+
+        [TestMethod]
+        public void VendingRemovesProduct()
+        {
+            InitWithSufficientCredit();
+            var result = _machine.Vend(_machine.Locations["A1"].Code);
+
+            Assert.AreEqual(VendResult.Success, result);
+
+            result = _machine.Vend(_machine.Locations["A1"].Code);
+
+            Assert.AreEqual(VendResult.ProductNotAvailable, result);
+        }
+
+        [TestMethod]
+        public void VendingDrainsCredit()
+        {
+            InitWithSufficientCredit();
+            var result = _machine.Vend(_machine.Locations["A1"].Code);
+
+            Assert.AreEqual(VendResult.Success, result);
+
+            result = _machine.Vend(_machine.Locations["A2"].Code);
+
+            Assert.AreEqual(VendResult.InsufficientCredit, result);
         }
     }
 }

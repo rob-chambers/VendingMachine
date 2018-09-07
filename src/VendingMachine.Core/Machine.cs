@@ -40,18 +40,34 @@ namespace VendingMachine.Core
 
         public NoteCreditProvider NoteCreditProvider { get; set; }
 
+        public decimal Credit
+        {
+            get
+            {
+                return CoinCreditProvider.Total + NoteCreditProvider.Total;
+            }
+        }
+
         public VendResult Vend(string code)
         {
+            if (!Locations.ContainsKey(code))
+            {
+                throw new InvalidLocationException(code);
+            }
+
             if (Locations[code].Product == null)
             {
                 return VendResult.ProductNotAvailable;
             }
 
-            var credit = CoinCreditProvider.Total + NoteCreditProvider.Total;
-            if (credit < Locations[code].Product.Price)
+            var price = Locations[code].Product.Price;
+            if (Credit < price)
             {
                 return VendResult.InsufficientCredit;
             }
+
+            // TODO: Reduce customer credit
+            Locations[code].Dispense();
 
             return VendResult.Success;            
         }

@@ -2,7 +2,6 @@
 {
     public class NoteCreditProvider : CreditProvider
     {
-        private int[] _denominations = { 5, 10 };
         private decimal _total;
 
         public override decimal Total
@@ -10,9 +9,16 @@
             get => _total;
         }
 
-        public void InsertNote(NoteDenomination denomination)
+        public bool InsertNote(NoteDenomination denomination)
         {
+            // Assume we can only accept one note
+            if (Total > 0)
+            {
+                return false;
+            }
+
             _total += denomination.Value;
+            return true;
         }
     }
 }

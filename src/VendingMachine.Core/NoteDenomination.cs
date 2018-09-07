@@ -2,7 +2,10 @@
 {
     public class NoteDenomination
     {
-        public NoteDenomination(int size)
+        public static NoteDenomination FivePound = new NoteDenomination(5);
+        public static NoteDenomination TenPound = new NoteDenomination(10);
+
+        private NoteDenomination(int size)
         {
             Size = size;
             Value = size;

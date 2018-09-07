@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CoinCreditProvider.cs" />
+    <Compile Include="InvalidLocationException.cs" />
     <Compile Include="NoteDenomination.cs" />
     <Compile Include="CreditProvider.cs" />
     <Compile Include="CoinDenomination.cs" />

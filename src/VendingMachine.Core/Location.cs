@@ -17,5 +17,15 @@ namespace VendingMachine.Core
         {
             Product = product;
         }
+
+        public void Dispense()
+        {
+            if (Product == null)
+                throw new InvalidOperationException("No product to be dispensed");
+
+            // Record date
+
+            Product = null;
+        }
     }
 }
