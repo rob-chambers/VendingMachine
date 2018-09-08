@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChangeGivenEventArgs.cs" />
     <Compile Include="CoinBank.cs" />
     <Compile Include="CoinCreditProvider.cs" />
     <Compile Include="InvalidLocationException.cs" />

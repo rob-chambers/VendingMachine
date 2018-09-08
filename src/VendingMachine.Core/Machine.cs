@@ -43,6 +43,8 @@ namespace VendingMachine.Core
 
         public event PropertyChangedEventHandler IsOutOfStockChanged;
 
+        public event EventHandler<ChangeGivenEventArgs> ChangeGiven;
+
         public CoinBank CoinBank { get; } = new CoinBank();
 
         public Dictionary<string, Location> Locations { get; private set; }
@@ -91,11 +93,21 @@ namespace VendingMachine.Core
             }
 
             Locations[code].Dispense();
-            CoinCreditProvider.ReduceCredit(price);
+
+            DispenseChange(price);
+            CoinCreditProvider.ReduceCredit(price);            
 
             DetermineOutOfStockStatus();
 
             return VendResult.Success;
+        }
+
+        private void DispenseChange(decimal price)
+        {
+            if (Credit > price)
+            {
+                RaiseChangeGivenEvent(Credit - price);
+            }
         }
 
         protected void RaiseOutOfStockChangeEvent()
@@ -103,6 +115,13 @@ namespace VendingMachine.Core
             var handler = IsOutOfStockChanged;
             if (handler == null) return;
             handler(this, new PropertyChangedEventArgs(nameof(IsOutOfStock)));
+        }
+
+        protected void RaiseChangeGivenEvent(decimal change)
+        {
+            var handler = ChangeGiven;
+            if (handler == null) return;
+            handler(this, new ChangeGivenEventArgs(change));
         }
 
         private void DetermineOutOfStockStatus()

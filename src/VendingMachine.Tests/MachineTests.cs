@@ -197,5 +197,47 @@ namespace VendingMachine.Tests
             Assert.IsFalse(result);
             Assert.AreEqual(0, _machine.CoinCreditProvider.Total);
         }
+
+        [TestMethod]
+        public void MachineDispensesChange()
+        {
+            // Arrange
+            Init();
+            _machine.Locations["A1"].Stock(_cokeCan);
+            _machine.CoinCreditProvider.InsertCoin(CoinDenomination.OnePound);
+            _machine.CoinCreditProvider.InsertCoin(CoinDenomination.FiftyPence);
+
+            var change = 0M;
+            _machine.ChangeGiven += (sender, e) => { change = e.Change; };
+
+            // Act
+            var result = _machine.Vend(_machine.Locations["A1"].Code);
+
+            // Assert
+            Assert.AreEqual(VendResult.Success, result);
+
+            var expected = 1.50M - _cokeCan.Price;
+            Assert.AreEqual(expected, change);
+        }
+
+        [TestMethod]
+        public void MachineDispensesNoChangeWhenCreditMatchesPrice()
+        {
+            // Arrange
+            Init();
+            _machine.Locations["A1"].Stock(_cokeCan);
+            _machine.CoinCreditProvider.InsertCoin(CoinDenomination.OnePound);
+            _machine.CoinCreditProvider.InsertCoin(CoinDenomination.TwentyPence);
+
+            var fired = false;
+            _machine.ChangeGiven += (sender, e) => { fired = true; };
+
+            // Act
+            var result = _machine.Vend(_machine.Locations["A1"].Code);
+
+            // Assert
+            Assert.AreEqual(VendResult.Success, result);
+            Assert.IsFalse(fired);
+        }
     }
 }
