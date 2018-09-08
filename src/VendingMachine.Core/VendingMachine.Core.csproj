@@ -43,15 +43,15 @@
   <ItemGroup>
     <Compile Include="ChangeGivenEventArgs.cs" />
     <Compile Include="CoinBank.cs" />
-    <Compile Include="CoinCreditProvider.cs" />
+    <Compile Include="CreditProviders\CoinCreditProvider.cs" />
     <Compile Include="InvalidLocationException.cs" />
     <Compile Include="NoteDenomination.cs" />
-    <Compile Include="CreditProvider.cs" />
+    <Compile Include="CreditProviders\CreditProvider.cs" />
     <Compile Include="CoinDenomination.cs" />
     <Compile Include="Location.cs" />
     <Compile Include="Machine.cs" />
     <Compile Include="MachineBuilder.cs" />
-    <Compile Include="NoteCreditProvider.cs" />
+    <Compile Include="CreditProviders\NoteCreditProvider.cs" />
     <Compile Include="Product.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VendResult.cs" />

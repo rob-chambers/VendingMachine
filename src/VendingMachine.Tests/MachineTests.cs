@@ -5,7 +5,7 @@ namespace VendingMachine.Tests
 {
     [TestClass]
     public class MachineTests
-    {                
+    {
         private readonly Product _cokeCan = Product.CokeCan;
         private readonly Product _cokeBottle = Product.CokeBottle;
         private Machine _machine;
@@ -35,13 +35,13 @@ namespace VendingMachine.Tests
         private void InitWithCokeCanCredit()
         {
             Init();
-            _machine.Locations["A1"].Stock(_cokeCan);            
+            _machine.Locations["A1"].Stock(_cokeCan);
 
             do
             {
                 _machine.CoinCreditProvider.InsertCoin(CoinDenomination.FivePence);
             }
-            while (_machine.CoinCreditProvider.Total < _cokeCan.Price);            
+            while (_machine.CoinCreditProvider.Total < _cokeCan.Price);
         }
 
         [TestMethod]
@@ -66,7 +66,7 @@ namespace VendingMachine.Tests
         public void CannotVendWhenStockedButNoCredit()
         {
             Init();
-            
+
             _machine.Locations["A1"].Stock(_cokeCan);
             var result = _machine.Vend(_machine.Locations["A1"].Code);
             Assert.AreEqual(VendResult.InsufficientCredit, result);
@@ -83,7 +83,7 @@ namespace VendingMachine.Tests
             {
                 _machine.CoinCreditProvider.InsertCoin(CoinDenomination.FiftyPence);
             }
-            
+
             var result = _machine.Vend(_machine.Locations["A1"].Code);
             Assert.AreEqual(VendResult.Success, result);
         }
@@ -160,7 +160,7 @@ namespace VendingMachine.Tests
         public void MachineNotOutOfStockAfterStocking()
         {
             // Arrange
-            Init();            
+            Init();
             var outOfStock = _machine.IsOutOfStock;
             _machine.IsOutOfStockChanged += (sender, args) => outOfStock = (sender as Machine).IsOutOfStock;
 
@@ -181,8 +181,8 @@ namespace VendingMachine.Tests
             _machine.IsOutOfStockChanged += (sender, args) => outOfStock = (sender as Machine).IsOutOfStock;
 
             // Act
-            _machine.Vend(_machine.Locations["A1"].Code);            
-            
+            _machine.Vend(_machine.Locations["A1"].Code);
+
             // Assert
             Assert.IsTrue(_machine.IsOutOfStock);
             Assert.IsTrue(outOfStock);

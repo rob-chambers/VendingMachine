@@ -21,7 +21,11 @@ namespace VendingMachine.Core
             get => _product;
             private set
             {
-                if (_product == value) return;
+                if (_product == value)
+                {
+                    return;
+                }
+
                 _product = value;
                 RaiseProductChangedEvent();
             }
@@ -30,7 +34,11 @@ namespace VendingMachine.Core
         private void RaiseProductChangedEvent()
         {
             var handler = ProductChanged;
-            if (handler == null) return;
+            if (handler == null)
+            {
+                return;
+            }
+
             handler(this, new PropertyChangedEventArgs(nameof(Product)));
         }
 
@@ -50,7 +58,9 @@ namespace VendingMachine.Core
         public void Dispense()
         {
             if (OutOfStock)
+            {
                 throw new InvalidOperationException("No product to be dispensed");
+            }
 
             // Record date
 

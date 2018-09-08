@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using VendingMachine.Core.CreditProviders;
 
 namespace VendingMachine.Core
 {
@@ -66,7 +67,11 @@ namespace VendingMachine.Core
             get => _isOutOfStock;
             set
             {
-                if (_isOutOfStock == value) return;
+                if (_isOutOfStock == value)
+                {
+                    return;
+                }
+
                 _isOutOfStock = value;
                 RaiseOutOfStockChangeEvent();
 
@@ -95,7 +100,7 @@ namespace VendingMachine.Core
             Locations[code].Dispense();
 
             DispenseChange(price);
-            CoinCreditProvider.ReduceCredit(price);            
+            CoinCreditProvider.ReduceCredit(price);
 
             DetermineOutOfStockStatus();
 
@@ -115,14 +120,22 @@ namespace VendingMachine.Core
         protected void RaiseOutOfStockChangeEvent()
         {
             var handler = IsOutOfStockChanged;
-            if (handler == null) return;
+            if (handler == null)
+            {
+                return;
+            }
+
             handler(this, new PropertyChangedEventArgs(nameof(IsOutOfStock)));
         }
 
         protected void RaiseChangeGivenEvent(decimal change)
         {
             var handler = ChangeGiven;
-            if (handler == null) return;
+            if (handler == null)
+            {
+                return;
+            }
+
             handler(this, new ChangeGivenEventArgs(change));
         }
 

@@ -5,7 +5,7 @@ namespace VendingMachine.Core
 {
     public class CoinBank
     {
-        List<CoinDenomination> Coins { get; } = new List<CoinDenomination>();
+        private List<CoinDenomination> Coins { get; } = new List<CoinDenomination>();
 
         public decimal Balance
         {
@@ -14,11 +14,11 @@ namespace VendingMachine.Core
                 decimal total = Coins.Sum(x => x.Value); ;
                 return total;
             }
-        }        
+        }
 
         public void AddCoin(CoinDenomination denomination)
         {
             Coins.Add(denomination);
-        }        
+        }
     }
 }

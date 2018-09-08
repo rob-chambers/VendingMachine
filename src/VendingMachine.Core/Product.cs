@@ -5,7 +5,7 @@
         public static Product CokeCan = new Product("CokeCan", 1.20M);
         public static Product CokeBottle = new Product("CokeBottle", 2M);
         public static Product Crisps = new Product("Crisps", 1.40M);
-        
+
         public string Name { get; private set; }
         public decimal Price { get; private set; }
 

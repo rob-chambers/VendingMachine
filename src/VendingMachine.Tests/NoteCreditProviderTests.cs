@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using VendingMachine.Core;
+using VendingMachine.Core.CreditProviders;
 
 namespace VendingMachine.Tests
 {

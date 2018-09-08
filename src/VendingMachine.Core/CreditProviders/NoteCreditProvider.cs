@@ -1,4 +1,4 @@
-﻿namespace VendingMachine.Core
+﻿namespace VendingMachine.Core.CreditProviders
 {
     public class NoteCreditProvider : CreditProvider
     {

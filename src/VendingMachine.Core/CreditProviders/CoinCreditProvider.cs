@@ -1,4 +1,4 @@
-﻿namespace VendingMachine.Core
+﻿namespace VendingMachine.Core.CreditProviders
 {
     public class CoinCreditProvider : CreditProvider
     {
@@ -18,7 +18,10 @@
 
         public bool InsertCoin(CoinDenomination denomination)
         {
-            if (_isOutOfStock) return false;
+            if (_isOutOfStock)
+            {
+                return false;
+            }
 
             _total += denomination.Value;
             _coinBank.AddCoin(denomination);

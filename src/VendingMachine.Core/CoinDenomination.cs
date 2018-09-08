@@ -20,8 +20,8 @@
 
         public override string ToString()
         {
-            return Size < 100 
-                ? Size + "p" 
+            return Size < 100
+                ? Size + "p"
                 : "£1";
         }
     }
