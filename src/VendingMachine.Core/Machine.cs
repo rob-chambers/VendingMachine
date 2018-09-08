@@ -104,6 +104,8 @@ namespace VendingMachine.Core
 
         private void DispenseChange(decimal price)
         {
+            // Note, we don't currently determine whether there is enough change available
+            // This is an excercise for extension / enhancement
             if (Credit > price)
             {
                 RaiseChangeGivenEvent(Credit - price);

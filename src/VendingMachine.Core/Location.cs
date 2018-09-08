@@ -23,11 +23,11 @@ namespace VendingMachine.Core
             {
                 if (_product == value) return;
                 _product = value;
-                RaiseStockChange();
+                RaiseProductChangedEvent();
             }
         }
 
-        private void RaiseStockChange()
+        private void RaiseProductChangedEvent()
         {
             var handler = ProductChanged;
             if (handler == null) return;

@@ -11,6 +11,7 @@ Requirements:
 2.	Can’t vend if not enough credit
 3.	The machine takes notes as well as coins
 4.	The machine will not accept more than one note as credit
+5.	The machine dispenses a product if enough credit has been supplied and returns change if necessary
 
 Suggestions for possible extensions/enhancements:
 

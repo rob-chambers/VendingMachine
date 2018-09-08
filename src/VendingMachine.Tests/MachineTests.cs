@@ -5,10 +5,10 @@ namespace VendingMachine.Tests
 {
     [TestClass]
     public class MachineTests
-    {        
-        Machine _machine;
-        private Product _cokeCan = Product.CokeCan;
-        private Product _cokeBottle = Product.CokeBottle;
+    {                
+        private readonly Product _cokeCan = Product.CokeCan;
+        private readonly Product _cokeBottle = Product.CokeBottle;
+        private Machine _machine;
 
         private void Init()
         {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace VendingMachine.Core
+﻿namespace VendingMachine.Core
 {
     public class CoinCreditProvider : CreditProvider
     {
