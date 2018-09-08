@@ -1,20 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Text;
 
 namespace VendingMachine.Core
 {
     public class Machine
     {
+        private bool _isOutOfStock;
+
         public Machine() : this(25)
         {
         }
 
-        private Machine(int numberLocations)
+        private Machine(int locationCount)
         {
-            CoinCreditProvider = new CoinCreditProvider();
-            NoteCreditProvider = new NoteCreditProvider();
-            FillLocations(numberLocations);
+            CoinCreditProvider = new CoinCreditProvider(CoinBank);
+            FillLocations(locationCount);
+            DetermineOutOfStockStatus();
         }
 
         private void FillLocations(int numberLocations)
@@ -27,24 +31,44 @@ namespace VendingMachine.Core
                 row = i / 5;
                 col = i % 5 + 1;
                 var rowChar = (byte)(65 + row);
-                char[] location = Encoding.ASCII.GetChars(new byte[] { rowChar });
-                var code = location[0] + col.ToString();
+                char[] rowChars = Encoding.ASCII.GetChars(new byte[] { rowChar });
+                var code = rowChars[0] + col.ToString();
 
-                Locations.Add(code, new Location(code));
+                var location = new Location(code);
+                location.ProductChanged += (sender, e) => { DetermineOutOfStockStatus(); };
+
+                Locations.Add(code, location);
             }
         }
+
+        public event PropertyChangedEventHandler IsOutOfStockChanged;
+
+        public CoinBank CoinBank { get; } = new CoinBank();
 
         public Dictionary<string, Location> Locations { get; private set; }
 
         public CoinCreditProvider CoinCreditProvider { get; set; }
 
-        public NoteCreditProvider NoteCreditProvider { get; set; }
+        public NoteCreditProvider NoteCreditProvider { get; set; } = new NoteCreditProvider();
 
         public decimal Credit
         {
             get
             {
                 return CoinCreditProvider.Total + NoteCreditProvider.Total;
+            }
+        }
+
+        public bool IsOutOfStock
+        {
+            get => _isOutOfStock;
+            set
+            {
+                if (_isOutOfStock == value) return;
+                _isOutOfStock = value;
+                RaiseOutOfStockChangeEvent();
+
+                CoinCreditProvider.UpdateOutOfStockStatus(value);
             }
         }
 
@@ -66,15 +90,24 @@ namespace VendingMachine.Core
                 return VendResult.InsufficientCredit;
             }
 
-            // TODO: Reduce customer credit
             Locations[code].Dispense();
+            CoinCreditProvider.ReduceCredit(price);
 
-            return VendResult.Success;            
+            DetermineOutOfStockStatus();
+
+            return VendResult.Success;
         }
 
-        public void Stock()
+        protected void RaiseOutOfStockChangeEvent()
         {
-            throw new NotImplementedException();
+            var handler = IsOutOfStockChanged;
+            if (handler == null) return;
+            handler(this, new PropertyChangedEventArgs(nameof(IsOutOfStock)));
+        }
+
+        private void DetermineOutOfStockStatus()
+        {
+            IsOutOfStock = Locations.All(x => x.Value.OutOfStock);
         }
     }
 }

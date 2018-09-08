@@ -7,11 +7,11 @@ namespace VendingMachine.Tests
     public class MachineTests
     {        
         Machine _machine;
-        private Product _coke;
+        private Product _cokeCan = Product.CokeCan;
+        private Product _cokeBottle = Product.CokeBottle;
 
         private void Init()
         {
-            _coke = Product.CokeCan;
             var builder = new MachineBuilder();
             _machine = builder.Build();
         }
@@ -20,12 +20,28 @@ namespace VendingMachine.Tests
         {
             Init();
 
-            _machine.Locations["A1"].Stock(_coke);
+            _machine.Locations["A1"].Stock(_cokeCan);
+            _machine.Locations["A2"].Stock(_cokeBottle);
+
+            _machine.CoinCreditProvider.InsertCoin(CoinDenomination.OnePound);
+            _machine.CoinCreditProvider.InsertCoin(CoinDenomination.OnePound);
             _machine.CoinCreditProvider.InsertCoin(CoinDenomination.OnePound);
             _machine.CoinCreditProvider.InsertCoin(CoinDenomination.FiftyPence);
             _machine.CoinCreditProvider.InsertCoin(CoinDenomination.FiftyPence);
             _machine.CoinCreditProvider.InsertCoin(CoinDenomination.TwentyPence);
             _machine.CoinCreditProvider.InsertCoin(CoinDenomination.TwentyPence);
+        }
+
+        private void InitWithCokeCanCredit()
+        {
+            Init();
+            _machine.Locations["A1"].Stock(_cokeCan);            
+
+            do
+            {
+                _machine.CoinCreditProvider.InsertCoin(CoinDenomination.FivePence);
+            }
+            while (_machine.CoinCreditProvider.Total < _cokeCan.Price);            
         }
 
         [TestMethod]
@@ -51,7 +67,7 @@ namespace VendingMachine.Tests
         {
             Init();
             
-            _machine.Locations["A1"].Stock(_coke);
+            _machine.Locations["A1"].Stock(_cokeCan);
             var result = _machine.Vend(_machine.Locations["A1"].Code);
             Assert.AreEqual(VendResult.InsufficientCredit, result);
         }
@@ -61,7 +77,7 @@ namespace VendingMachine.Tests
         {
             Init();
 
-            _machine.Locations["A1"].Stock(_coke);
+            _machine.Locations["A1"].Stock(_cokeCan);
 
             for (int i = 0; i < 10; i++)
             {
@@ -99,7 +115,7 @@ namespace VendingMachine.Tests
         {
             Init();
 
-            _machine.Locations["A1"].Stock(_coke);
+            _machine.Locations["A1"].Stock(_cokeCan);
             _machine.CoinCreditProvider.InsertCoin(CoinDenomination.FivePence);
             var result = _machine.Vend(_machine.Locations["A1"].Code);
             Assert.AreEqual(VendResult.InsufficientCredit, result);
@@ -121,7 +137,9 @@ namespace VendingMachine.Tests
         [TestMethod]
         public void VendingDrainsCredit()
         {
-            InitWithSufficientCredit();
+            InitWithCokeCanCredit();
+            _machine.Locations["A2"].Stock(_cokeBottle);
+
             var result = _machine.Vend(_machine.Locations["A1"].Code);
 
             Assert.AreEqual(VendResult.Success, result);
@@ -129,6 +147,55 @@ namespace VendingMachine.Tests
             result = _machine.Vend(_machine.Locations["A2"].Code);
 
             Assert.AreEqual(VendResult.InsufficientCredit, result);
+        }
+
+        [TestMethod]
+        public void MachineInitiallyOutOfStock()
+        {
+            Init();
+            Assert.IsTrue(_machine.IsOutOfStock);
+        }
+
+        [TestMethod]
+        public void MachineNotOutOfStockAfterStocking()
+        {
+            // Arrange
+            Init();            
+            var outOfStock = _machine.IsOutOfStock;
+            _machine.IsOutOfStockChanged += (sender, args) => outOfStock = (sender as Machine).IsOutOfStock;
+
+            // Act
+            _machine.Locations["A1"].Stock(_cokeCan);
+
+            // Assert
+            Assert.IsFalse(_machine.IsOutOfStock);
+            Assert.IsFalse(outOfStock);
+        }
+
+        [TestMethod]
+        public void MachineOutOfStockAfterVendingLastProduct()
+        {
+            // Arrange
+            InitWithCokeCanCredit();
+            var outOfStock = _machine.IsOutOfStock;
+            _machine.IsOutOfStockChanged += (sender, args) => outOfStock = (sender as Machine).IsOutOfStock;
+
+            // Act
+            _machine.Vend(_machine.Locations["A1"].Code);            
+            
+            // Assert
+            Assert.IsTrue(_machine.IsOutOfStock);
+            Assert.IsTrue(outOfStock);
+        }
+
+        [TestMethod]
+        public void MachineDoesNotAcceptCoinsWhenOutOfStock()
+        {
+            Init();
+            var result = _machine.CoinCreditProvider.InsertCoin(CoinDenomination.OnePound);
+
+            Assert.IsFalse(result);
+            Assert.AreEqual(0, _machine.CoinCreditProvider.Total);
         }
     }
 }
