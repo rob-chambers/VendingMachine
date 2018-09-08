@@ -22,3 +22,4 @@ Suggestions for possible extensions/enhancements:
 	* When is the stock for a product getting low?
 	* When does a product require re-stocking?
 	* What time of day is the least/most profitable?
+	* What is the most profitable product?
