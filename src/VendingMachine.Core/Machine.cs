@@ -25,14 +25,14 @@ namespace VendingMachine.Core
         private void FillLocations(int numberLocations)
         {
             Locations = new Dictionary<string, Location>();
-            for (int i = 0; i < numberLocations; i++)
+            for (var i = 0; i < numberLocations; i++)
             {
                 int row, col;
 
                 row = i / 5;
                 col = i % 5 + 1;
                 var rowChar = (byte)(65 + row);
-                char[] rowChars = Encoding.ASCII.GetChars(new byte[] { rowChar });
+                var rowChars = Encoding.ASCII.GetChars(new byte[] { rowChar });
                 var code = rowChars[0] + col.ToString();
 
                 var location = new Location(code);

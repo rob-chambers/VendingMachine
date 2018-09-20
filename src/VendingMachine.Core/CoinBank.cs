@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace VendingMachine.Core
@@ -11,13 +12,18 @@ namespace VendingMachine.Core
         {
             get
             {
-                decimal total = Coins.Sum(x => x.Value); ;
+                var total = Coins.Sum(x => x.Value);
                 return total;
             }
         }
 
         public void AddCoin(CoinDenomination denomination)
         {
+            if (denomination == null)
+            {
+                throw new ArgumentNullException(nameof(denomination));
+            }
+
             Coins.Add(denomination);
         }
     }
