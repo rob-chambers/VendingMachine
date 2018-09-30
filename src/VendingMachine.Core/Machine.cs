@@ -22,37 +22,13 @@ namespace VendingMachine.Core
             DetermineOutOfStockStatus();
         }
 
-        private void FillLocations(int numberLocations)
-        {
-            Locations = new Dictionary<string, Location>();
-            for (var i = 0; i < numberLocations; i++)
-            {
-                int row, col;
-
-                row = i / 5;
-                col = i % 5 + 1;
-                var rowChar = (byte)(65 + row);
-                var rowChars = Encoding.ASCII.GetChars(new byte[] { rowChar });
-                var code = rowChars[0] + col.ToString();
-
-                var location = new Location(code);
-                location.ProductChanged += (sender, e) => { DetermineOutOfStockStatus(); };
-
-                Locations.Add(code, location);
-            }
-        }
+        public event EventHandler<ChangeGivenEventArgs> ChangeGiven;
 
         public event PropertyChangedEventHandler IsOutOfStockChanged;
 
-        public event EventHandler<ChangeGivenEventArgs> ChangeGiven;
-
         public CoinBank CoinBank { get; } = new CoinBank();
 
-        public Dictionary<string, Location> Locations { get; private set; }
-
         public CoinCreditProvider CoinCreditProvider { get; set; }
-
-        public NoteCreditProvider NoteCreditProvider { get; set; } = new NoteCreditProvider();
 
         public decimal Credit
         {
@@ -78,6 +54,10 @@ namespace VendingMachine.Core
                 CoinCreditProvider.UpdateOutOfStockStatus(value);
             }
         }
+
+        public Dictionary<string, Location> Locations { get; private set; }
+
+        public NoteCreditProvider NoteCreditProvider { get; set; } = new NoteCreditProvider();
 
         public VendResult Vend(string code)
         {
@@ -107,14 +87,15 @@ namespace VendingMachine.Core
             return VendResult.Success;
         }
 
-        private void DispenseChange(decimal price)
+        protected void RaiseChangeGivenEvent(decimal change)
         {
-            // Note, we don't currently determine whether there is enough change available
-            // This is an excercise for extension / enhancement
-            if (Credit > price)
+            var handler = ChangeGiven;
+            if (handler == null)
             {
-                RaiseChangeGivenEvent(Credit - price);
+                return;
             }
+
+            handler(this, new ChangeGivenEventArgs(change));
         }
 
         protected void RaiseOutOfStockChangeEvent()
@@ -128,20 +109,39 @@ namespace VendingMachine.Core
             handler(this, new PropertyChangedEventArgs(nameof(IsOutOfStock)));
         }
 
-        protected void RaiseChangeGivenEvent(decimal change)
-        {
-            var handler = ChangeGiven;
-            if (handler == null)
-            {
-                return;
-            }
-
-            handler(this, new ChangeGivenEventArgs(change));
-        }
-
         private void DetermineOutOfStockStatus()
         {
             IsOutOfStock = Locations.All(x => x.Value.OutOfStock);
+        }
+
+        private void DispenseChange(decimal price)
+        {
+            // Note, we don't currently determine whether there is enough change available
+            // This is an excercise for extension / enhancement
+            if (Credit > price)
+            {
+                RaiseChangeGivenEvent(Credit - price);
+            }
+        }
+
+        private void FillLocations(int numberLocations)
+        {
+            Locations = new Dictionary<string, Location>();
+            for (var i = 0; i < numberLocations; i++)
+            {
+                int row, col;
+
+                row = i / 5;
+                col = i % 5 + 1;
+                var rowChar = (byte)(65 + row);
+                var rowChars = Encoding.ASCII.GetChars(new byte[] { rowChar });
+                var code = rowChars[0] + col.ToString();
+
+                var location = new Location(code);
+                location.ProductChanged += (sender, e) => { DetermineOutOfStockStatus(); };
+
+                Locations.Add(code, location);
+            }
         }
     }
 }
