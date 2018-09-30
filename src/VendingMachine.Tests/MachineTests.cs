@@ -79,7 +79,7 @@ namespace VendingMachine.Tests
 
             _machine.Locations["A1"].Stock(_cokeCan);
 
-            for (int i = 0; i < 10; i++)
+            for (var i = 0; i < 10; i++)
             {
                 _machine.CoinCreditProvider.InsertCoin(CoinDenomination.FiftyPence);
             }
@@ -94,7 +94,7 @@ namespace VendingMachine.Tests
             Init();
 
             var pass = false;
-            string exception = string.Empty;
+            var exception = string.Empty;
 
             try
             {

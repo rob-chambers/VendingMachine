@@ -33,6 +33,12 @@
             _total -= price;
         }
 
+        public void ReturnCoins(decimal value)
+        {
+            ReduceCredit(value);
+            _coinBank.Withdraw(value);
+        }
+
         public void UpdateOutOfStockStatus(bool isOutOfStock)
         {
             _isOutOfStock = isOutOfStock;

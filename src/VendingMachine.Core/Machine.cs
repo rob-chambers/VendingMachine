@@ -41,7 +41,7 @@ namespace VendingMachine.Core
         public bool IsOutOfStock
         {
             get => _isOutOfStock;
-            set
+            private set
             {
                 if (_isOutOfStock == value)
                 {
@@ -142,6 +142,21 @@ namespace VendingMachine.Core
 
                 Locations.Add(code, location);
             }
+        }
+
+        public void Cancel()
+        {
+            var credit = Credit;
+            if (NoteCreditProvider.Total > 0)
+            {
+                NoteCreditProvider.ReduceCredit(credit);
+            }
+            else
+            {
+                CoinCreditProvider.ReturnCoins(credit);
+            }
+
+            RaiseChangeGivenEvent(credit);
         }
     }
 }

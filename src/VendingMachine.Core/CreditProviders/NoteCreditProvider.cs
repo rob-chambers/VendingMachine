@@ -20,5 +20,10 @@
             _total += denomination.Value;
             return true;
         }
+
+        public void ReduceCredit(decimal credit)
+        {
+            _total -= credit;
+        }
     }
 }

@@ -49,7 +49,9 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CoinBankTests.cs" />
     <Compile Include="CoinCreditProviderTests.cs" />
+    <Compile Include="CancelVendTests.cs" />
     <Compile Include="NoteDenominationTests.cs" />
     <Compile Include="CoinDenominationTests.cs" />
     <Compile Include="MachineTests.cs" />
