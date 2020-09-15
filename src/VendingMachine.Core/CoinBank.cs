@@ -41,7 +41,7 @@ namespace VendingMachine.Core
             }
 
             // Prioritise by largest denomination
-            var coins = Coins.Where(c => c.Value < value).OrderByDescending(c => c.Size);                
+            var coins = Coins.Where(c => c.Value < value).OrderByDescending(c => c.Size);
             var combination = GetCombinationForTotal(coins, value);
             if (combination != null)
             {

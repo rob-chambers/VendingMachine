@@ -42,7 +42,7 @@ namespace VendingMachine.Tests
         public void MachineReturnsOnlyCustomerCreditWhenCancelled()
         {
             // Arrange
-            Init();            
+            Init();
 
             _machine.CoinBank.AddCoin(CoinDenomination.FiftyPence);
 
